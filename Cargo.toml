@@ -1,0 +1,10 @@
+[package]
+name = "rss-reader-rs"
+version = "0.1.0"
+authors = ["Huy Tran <huy@loopcommerce.com>"]
+edition = "2018"
+
+[dependencies]
+feed-parser = { path = "./feed-parser" }
+readability = "0.1.5"
+chrono      = { version = "^0", features = ["serde"] }
