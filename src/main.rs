@@ -1,18 +1,7 @@
 extern crate feed_parser;
 extern crate readability;
 
-use feed_parser::parser;
-use feed_parser::feed::Feed;
-use feed_parser::entry::Entry;
-use readability::extractor;
-use chrono::{NaiveDateTime};
-
-#[derive(Debug)]
-struct ParsedEntry {
-    title: String,
-    url: String,
-    published: NaiveDateTime
-}
+mod articles;
 
 fn main() {
     let feed_vietnamese = vec![
@@ -63,33 +52,8 @@ fn main() {
     ];
     
     let _feeds = [feed_vietnamese, feed_financial, feed_tech, feed_other].concat();
-    let parsed_feeds: Vec<Feed> =
-        feed_test.iter()
-        .map(|url| parser::from_url(url))
-        .filter(|feed| feed.is_some())
-        .map(|feed| feed.unwrap())
-        .collect();
 
-    let entries: Vec<ParsedEntry> =
-        parsed_feeds.iter()
-        .flat_map(|feed| &feed.entries)
-        .map(|entry| ParsedEntry {
-            title: entry.title.as_ref().unwrap().to_owned(),
-            url: entry.alternate.first().unwrap().href.to_owned(),
-            published: entry.published
-        })
-        .collect();
-    
-    let articles: Vec<String> =
-        entries.iter()
-        .map(|article| extractor::scrape(&article.url))
-        .filter(|result| result.is_ok())
-        .map(|product| product.unwrap())
-        .map(|product| product.text)
-        .collect();
-
-    let parsed_articles: Vec<(&ParsedEntry, String)> =
-        entries.iter().zip(articles).collect();
-
-    println!("{:?}", parsed_articles);
+    let entries = articles::parse_feed_to_entries(feed_test);
+    let result = articles::parse_entries_content(&entries);
+    println!("{:?}", result);
 }
