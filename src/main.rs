@@ -61,8 +61,7 @@ fn main() {
             println!("Fetched content of article {}", &article.as_ref().unwrap().url);
             article
         })
-        .filter(|entry| entry.is_ok())
-        .map(|entry| entry.unwrap())
+        .filter_map(Result::ok)
         .collect();
 
     println!("DONE");

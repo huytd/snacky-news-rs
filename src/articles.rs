@@ -15,8 +15,7 @@ pub fn parse_feed_to_entries<'a>(feeds: &'a Vec<&str>) -> impl Iterator<Item=Par
     let parsed_feeds =
         feeds.iter()
         .map(|url| parser::from_url(url))
-        .filter(|feed| feed.is_some())
-        .map(|feed| feed.unwrap());
+        .filter_map(std::convert::identity);
 
     let entries =
         parsed_feeds
