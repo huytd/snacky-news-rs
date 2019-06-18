@@ -53,7 +53,17 @@ fn main() {
     
     let _feeds = [feed_vietnamese, feed_financial, feed_tech, feed_other].concat();
 
-    let entries = articles::parse_feed_to_entries(feed_test);
-    let result = articles::parse_entries_content(&entries);
-    println!("{:?}", result);
+    println!("START");
+
+    let _result: Vec<articles::ParsedEntry> = articles::parse_feed_to_entries(&feed_test)
+        .map(|entry: articles::ParsedEntry| {
+            let article = articles::fetch_entry_content(entry);
+            println!("Fetched content of article {}", &article.as_ref().unwrap().url);
+            article
+        })
+        .filter(|entry| entry.is_ok())
+        .map(|entry| entry.unwrap())
+        .collect();
+
+    println!("DONE");
 }
