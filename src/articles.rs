@@ -1,8 +1,9 @@
 use feed_parser::parser;
 use readability::extractor;
 use chrono::{NaiveDateTime};
+use serde::{ Serialize, Deserialize };
 
-#[derive(Debug)]
+#[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct ParsedEntry {
     pub title: String,
     pub url: String,
