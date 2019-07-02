@@ -10,58 +10,23 @@ extern crate chrono;
 use std::time::Duration;
 use std::sync::{Arc, RwLock};
 use actix_web::{
-    web, App, HttpRequest, HttpResponse, HttpServer,
+    web, App, HttpResponse, HttpServer,
 };
 
 mod articles;
+mod sources;
 
 // Run every 30 min
 const FETCH_INTERVAL: u64 = 30 * 60u64;
 
+#[derive(serde::Deserialize)]
+struct ArticleParams {
+    topic: String
+}
+
 fn main() -> std::io::Result<()> {
-    let feed_vietnamese = vec![
-        // Vietnamese
-        "https://tuoitre.vn/rss/tin-moi-nhat.rss",
-        "https://tinhte.vn/rss",
-        "https://www.voatiengviet.com/api/zkvypemovm",
-        "https://www.voatiengviet.com/api/z$uyietpv_",
-        "https://www.voatiengviet.com/api/zruyyeuivt",
-        "https://www.voatiengviet.com/api/z_ty_erivy"
-    ];
-
-    let feed_financial = vec![
-        // Investing, Economics and Financial
-        "http://feeds.marketwatch.com/marketwatch/topstories/",
-        "https://www.investing.com/rss/news.rss",
-        "https://www.cnbc.com/id/100003114/device/rss/rss.html",
-        "https://www.cnbc.com/id/10000664/device/rss/rss.html",
-        "https://www.cnbc.com/id/10000115/device/rss/rss.html",
-        "https://www.cnbc.com/id/15839069/device/rss/rss.html",
-        "http://feeds.reuters.com/reuters/businessNews"
-    ];
-
-    let feed_tech = vec![
-         // Technology
-        "https://www.reddit.com/r/Technologies+elm+haskell+emacs+javascript+programming+rust.rss",
-        "http://feeds.feedburner.com/TechCrunch/",
-        "https://news.ycombinator.com/rss",
-        "http://feeds.arstechnica.com/arstechnica/index",
-        "https://www.theverge.com/rss/index.xml",
-        "https://live.engadget.com/rss.xml",
-        "https://www.wired.com/feed/rss",
-        "https://thenextweb.com/feed/"
-    ];
-
-    let feed_other = vec![
-        // Other News
-        "https://www.theonion.com/rss",
-        "https://www.reddit.com/r/UpliftingNews+worldnews.rss",
-        "http://feeds.reuters.com/reuters/topNews",
-        "http://feeds.reuters.com/Reuters/domesticNews",
-        "http://feeds.reuters.com/Reuters/worldNews"
-    ];
     
-    let feeds = [feed_vietnamese, feed_financial, feed_tech, feed_other].concat();
+    let feeds = sources::get_sources_from_range(sources::ID_VIETNAMESE..sources::ID_OTHER);
 
     let articles_data: Vec<articles::ParsedEntry> = vec![];
     let mutex = std::sync::RwLock::new(articles_data);
@@ -70,6 +35,11 @@ fn main() -> std::io::Result<()> {
     let write_arc = arc.clone();
     std::thread::spawn(move || {
         loop {
+            println!("Reseting data entries...");
+            {
+                let mut guard = write_arc.write().unwrap();
+                (*guard).clear();
+            }
             println!("Collecting data...");
             articles::parse_feed_to_entries(&feeds)
                 .for_each(|e| {
@@ -93,11 +63,27 @@ fn main() -> std::io::Result<()> {
     HttpServer::new(move || {
         App::new()
             .register_data(web_data.clone())
-            .service(web::resource("/api/articles").route(web::get().to(|state: web::Data<Arc<RwLock<Vec<articles::ParsedEntry>>>>, _req: HttpRequest| -> HttpResponse {
+            .service(web::resource("/api/articles/{topic}").route(web::get().to(|state: web::Data<Arc<RwLock<Vec<articles::ParsedEntry>>>>, params: web::Path<ArticleParams>| -> HttpResponse {
+                let sources = match params.topic.as_str() {
+                    "vietnamese" => sources::get_sources_from_list(&[sources::ID_VIETNAMESE]),
+                    "financial" => sources::get_sources_from_list(&[sources::ID_FINANCIAL]),
+                    "technical" => sources::get_sources_from_list(&[sources::ID_TECHNICAL]),
+                    "other" => sources::get_sources_from_list(&[sources::ID_OTHER]),
+                    _ => sources::get_sources_from_range(sources::ID_VIETNAMESE..sources::ID_OTHER)
+                };
+                let domains = sources::get_domains_from_sources(sources);
                 let data = state.read().unwrap();
-                HttpResponse::Ok().json(json!({ "articles": (*data) }))
+                let articles: Vec<_> = data.iter().cloned().collect();
+
+                // TODO: pagination, maybe?
+                HttpResponse::Ok().json(json!({ 
+                    "articles": articles
+                                .into_iter()
+                                .filter(|e: &articles::ParsedEntry| domains.iter().any(|url| e.url.contains(url)))
+                                .collect::<Vec<_>>()
+                }))
             })))
     })
-    .bind("127.0.0.1:3366")?
+    .bind("127.0.0.1:3366")? // TODO: make this configurable
     .run()
 }
