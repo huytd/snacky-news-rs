@@ -1,0 +1,79 @@
+@import url('https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,700|Source+Serif+Pro:400,700&display=swap&subset=latin-ext,vietnamese');
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+$headings: 1, 2, 3, 4, 5, 6;
+$base-heading-size: 2.4em;
+@each $level in $headings {
+    h#{$level} {
+        font-size: $base-heading-size - $level * 0.25;
+        line-height: 1.4em;
+    }
+}
+
+.font-sans {
+    font-family: 'Source Sans Pro', sans-serif;
+}
+
+.font-serif {
+    font-family: 'Source Serif Pro', serif;
+}
+
+.nav-article-topic {
+    @apply text-gray-600;
+    @apply border-gray-600;
+    @apply bg-gray-100;
+    @apply uppercase;
+    @apply font-bold;
+    cursor: pointer;
+
+    &:hover {
+        @apply text-gray-800;
+        @apply border-gray-800;
+    }
+
+    &.active {
+        @apply bg-gray-800;
+        @apply border-gray-800;
+        @apply text-gray-100;
+    }
+}
+
+.article-card {
+    @apply mb-12;
+
+    $article-image-size: 160px;
+    .image-cover {
+        width: $article-image-size;
+        height: $article-image-size;
+        text-align: center;
+        position: relative;
+        @apply bg-gray-600;
+
+        &:after {
+            content: "Loading...";
+            text-align: center;
+            line-height: $article-image-size;
+            @apply text-gray-300;
+        }
+
+        img {
+            display: block;
+            height: $article-image-size;
+            width: auto;
+            max-width: inherit;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            margin-right: -50%;
+            transform: translate(-50%, -50%);
+        }
+    }
+}
+
+.article-content {
+    p {
+        @apply mb-4;
+    }
+}

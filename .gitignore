@@ -1,2 +1,7 @@
 /target
 **/*.rs.bk
+dist
+.cache
+node_modules
+.vscode
+yarn-error.log

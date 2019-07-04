@@ -1,7 +1,9 @@
-extern crate crossbeam;
+extern crate reqwest;
+extern crate scraper;
 extern crate feed_parser;
 extern crate readability;
 extern crate actix_web;
+extern crate actix_files;
 extern crate serde;
 #[macro_use]
 extern crate serde_json;
@@ -12,6 +14,7 @@ use std::sync::{Arc, RwLock};
 use actix_web::{
     web, App, HttpResponse, HttpServer,
 };
+use actix_files as fs;
 
 mod articles;
 mod sources;
@@ -83,6 +86,7 @@ fn main() -> std::io::Result<()> {
                                 .collect::<Vec<_>>()
                 }))
             })))
+            .service(fs::Files::new("/", "./static/dist/").index_file("index.html"))
     })
     .bind("127.0.0.1:3366")? // TODO: make this configurable
     .run()
