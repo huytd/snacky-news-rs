@@ -88,3 +88,8 @@ v
 |
 :
 ```
+
+## Related Projects
+
+- TUI-based Client https://github.com/ZeroX-DG/rsn
+- iOS Client https://github.com/ldakhoa/Dev-News
