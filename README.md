@@ -1,4 +1,28 @@
-# Snacky News API
+# Snacky News
+
+![](screenshot.gif)
+
+## How to run on your local machine
+
+First, build the UI app:
+
+```
+cd static
+yarn install
+yarn build
+```
+
+Then compile and run the server:
+```
+cd .. # go back to the project's root folder
+cargo r
+```
+
+## The UI
+
+The UI built with React and TailwindCSS, the source are sitting in `./static` folder.
+
+If you aren't happy with the built-in UI, blame [the guy who designed it](https://github.com/dvkndn/), or just build a new one yourself.
 
 ## The API
 
