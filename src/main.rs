@@ -62,6 +62,8 @@ fn main() -> std::io::Result<()> {
     
     std::env::set_var("RUST_LOG", "actix_server=info,actix_web=info");
     env_logger::init();
+
+    let port = std::env::var("PORT").unwrap_or("3366".to_owned()).parse::<u16>().unwrap_or(3366);
     
     HttpServer::new(move || {
         App::new()
@@ -88,6 +90,6 @@ fn main() -> std::io::Result<()> {
             })))
             .service(fs::Files::new("/", "./static/dist/").index_file("index.html"))
     })
-    .bind("127.0.0.1:3366")? // TODO: make this configurable
+    .bind(("127.0.0.1", port))?
     .run()
 }
