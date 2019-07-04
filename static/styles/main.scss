@@ -76,4 +76,7 @@ $base-heading-size: 2.4em;
     p {
         @apply mb-4;
     }
+    a {
+        @apply text-blue-600;
+    }
 }
