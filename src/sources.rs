@@ -7,7 +7,8 @@ fn sources_vietnamese() -> Vec<&'static str> {
     vec![
         // Vietnamese
         "https://tuoitre.vn/rss/tin-moi-nhat.rss",
-        "https://tinhte.vn/rss"
+        "https://tinhte.vn/rss",
+        "https://vnexpress.net/rss/thoi-su.rss"
     ]
 }
 
@@ -27,7 +28,7 @@ fn sources_financial() -> Vec<&'static str> {
 fn sources_tech() -> Vec<&'static str> {
     vec![
         // Technology
-        "https://www.reddit.com/r/Technologies+elm+haskell+emacs+javascript+programming+rust.rss",
+        "https://www.reddit.com/r/Technologies+elm+haskell+emacs+javascript+programming+rust+swift.rss",
         "http://feeds.feedburner.com/TechCrunch/",
         "https://news.ycombinator.com/rss",
         "http://feeds.arstechnica.com/arstechnica/index",
