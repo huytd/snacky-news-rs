@@ -93,3 +93,10 @@ v
 
 - TUI-based Client https://github.com/ZeroX-DG/rsn
 - iOS Client https://github.com/ldakhoa/Dev-News
+
+## Known Issues
+
+- [ ] "Too many open files" on Linux
+- [ ] Need to filter out articles older than a day
+- [ ] Need to reduce the rate of article fetch call
+- [ ] Mobile and Tablet UI
