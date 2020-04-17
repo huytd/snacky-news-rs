@@ -44,8 +44,11 @@ fn main() -> std::io::Result<()> {
                 (*guard).clear();
             }
             println!("Collecting data...");
+            let mut count = 0;
             articles::parse_feed_to_entries(&feeds)
                 .for_each(|e| {
+                    count += 1;
+                    println!("count #{}: {}", count, e.url);
                     let entry = articles::fetch_entry_content(e);
                     if entry.is_ok() {
                         let okentry = entry.unwrap();
@@ -72,7 +75,6 @@ fn main() -> std::io::Result<()> {
                 let sources = match params.topic.as_str() {
                     "vietnamese" => sources::get_sources_from_list(&[sources::ID_VIETNAMESE]),
                     "financial" => sources::get_sources_from_list(&[sources::ID_FINANCIAL]),
-                    "technical" => sources::get_sources_from_list(&[sources::ID_TECHNICAL]),
                     "other" => sources::get_sources_from_list(&[sources::ID_OTHER]),
                     _ => sources::get_sources_from_range(sources::ID_VIETNAMESE..sources::ID_OTHER)
                 };

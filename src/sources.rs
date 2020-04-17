@@ -1,14 +1,14 @@
 pub const ID_VIETNAMESE: usize = 0;
 pub const ID_FINANCIAL: usize  = 1;
-pub const ID_TECHNICAL: usize  = 2;
-pub const ID_OTHER: usize      = 3;
+pub const ID_OTHER: usize      = 2;
 
 fn sources_vietnamese() -> Vec<&'static str> {
     vec![
         // Vietnamese
         "https://tuoitre.vn/rss/tin-moi-nhat.rss",
         "https://tinhte.vn/rss",
-        "https://vnexpress.net/rss/thoi-su.rss"
+        "https://www.thesaigontimes.vn/rssview/tinnoibat/",
+        "https://www.thesaigontimes.vn/rssview/moicapnhat/"
     ]
 }
 
@@ -25,25 +25,10 @@ fn sources_financial() -> Vec<&'static str> {
     ]
 }
 
-fn sources_tech() -> Vec<&'static str> {
-    vec![
-        // Technology
-        "https://www.reddit.com/r/Technologies+elm+haskell+emacs+javascript+programming+rust+swift.rss",
-        "http://feeds.feedburner.com/TechCrunch/",
-        "https://news.ycombinator.com/rss",
-        "http://feeds.arstechnica.com/arstechnica/index",
-        "https://www.theverge.com/rss/index.xml",
-        "https://live.engadget.com/rss.xml",
-        "https://www.wired.com/feed/rss",
-        "https://thenextweb.com/feed/"
-    ]
-}
-
 fn sources_other() -> Vec<&'static str> {
     vec![
         // Other News
         "https://www.theonion.com/rss",
-        "https://www.reddit.com/r/UpliftingNews+worldnews.rss",
         "http://feeds.reuters.com/reuters/topNews",
         "http://feeds.reuters.com/Reuters/domesticNews",
         "http://feeds.reuters.com/Reuters/worldNews"
@@ -54,7 +39,6 @@ pub fn get_source_by_id(id: usize) -> Vec<&'static str> {
     match id {
         ID_VIETNAMESE => sources_vietnamese(),
         ID_FINANCIAL => sources_financial(),
-        ID_TECHNICAL => sources_tech(),
         ID_OTHER => sources_other(),
         _ => vec![]
     }

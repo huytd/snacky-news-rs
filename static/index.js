@@ -9,6 +9,11 @@ const HALF_PAGE_ARTICLE = (article) => article.text.length >= 5000 && article.te
 const ONE_THIRD_ARTICLE = (article) => article.text.length >= 2500 && article.text.length < 5000;
 const ONE_FOURTH_ARTICLE = (article) => article.text.length < 2500;
 
+Array.prototype.take = function(n) {
+    const ret = this.splice(0, n);
+    return ret;
+};
+
 const getDomainFromUrl = url => {
     let url_parts = url.replace(/https?\:\/\/(www.)?/g, '').split('/');
     return url_parts[0];
@@ -71,30 +76,95 @@ const copyToClipboard = (input) => {
     return success;
 };
 
-const DESC_WORDS_COUNT = 50;
+const FullPageLayout = (props) => {
+    const [first] = props.articles.one.take(1);
+    const [second] = props.articles.four.take(1);
+    return (
+        <div className="flex flex-row border-b border-gray-500 py-5">
+            <div className="article-left flex-1 border-r border-gray-500 pr-5">
+                <h4 className="my-2">{first.title}</h4>
+                <div className="three-columns text-justify">
+                    {first.image && (<div className="image-cover mb-4 overflow-hidden"><img src={first.image} /></div>)}
+                    {first.text.replace(/\n/g, "\n\n")}
+                </div>
+            </div>
+            <div className="article-right w-1/4 pl-5">
+                <h4 className="my-2">{second.title}</h4>
+                <div className="two-columns text-justify">
+                    {second.image && (<div className="image-cover mb-4 overflow-hidden"><img src={second.image} /></div>)}
+                    {second.text.replace(/\n/g, "\n\n")}
+                </div>
+            </div>
+        </div>
+    );
+};
 
-const ThreeColumnCenter = (props) => {
-
+const FullPageLayoutLeft = (props) => {
+    const [first] = props.articles.one.take(1);
+    const [second, third, fourth] = props.articles.four.take(3);
+    return (
+        <div className="flex flex-row border-b border-gray-500 py-5">
+            <div className="article-left w-2/5 border-r border-gray-500 pr-5">
+                <h5 className="my-2">{second.title}</h5>
+                <div className="three-columns text-justify">
+                    {second.image && (<div className="image-cover mb-4 overflow-hidden"><img src={second.image} /></div>)}
+                    {second.text.replace(/\n/g, "\n\n")}
+                </div>
+                <h5 className="my-2">{third.title}</h5>
+                <div className="three-columns text-justify">
+                    {third.image && (<div className="image-cover mb-4 overflow-hidden"><img src={third.image} /></div>)}
+                    {third.text.replace(/\n/g, "\n\n")}
+                </div>
+                <h5 className="my-2">{fourth.title}</h5>
+                <div className="three-columns text-justify">
+                    {fourth.image && (<div className="image-cover mb-4 overflow-hidden"><img src={fourth.image} /></div>)}
+                    {fourth.text.replace(/\n/g, "\n\n")}
+                </div>
+            </div>
+            <div className="article-right flex-1 pl-5">
+                <h4 className="my-2">{first.title}</h4>
+                <div className="four-columns text-justify">
+                    {first.image && (<div className="image-cover mb-4 overflow-hidden"><img src={first.image} /></div>)}
+                    {first.text.replace(/\n/g, "\n\n")}
+                </div>
+            </div>
+        </div>
+    );
 };
 
 const TripleLayout = (props) => {
-    const [first, second, third, ...rest] = props.articles;
+    const [first, second, third] = props.articles.take(3);
     return (
-        <div className="flex flex-row three-items border-b border-gray-500 py-5">
+        <div className="three-items border-b border-gray-500 py-5">
             <div className="six-columns">
-                <h4 className="my-2">{first.title}</h4>
-                <div className="my-4 text-justify">{first.text.replace(/\n/g, "\n\n")}</div>
-                <h4 className="my-2">{second.title}</h4>
-                <div className="my-4 text-justify">{second.text.replace(/\n/g, "\n\n")}</div>
-                <h4 className="my-2">{third.title}</h4>
-                <div className="my-4 text-justify">{third.text.replace(/\n/g, "\n\n")}</div>
+                {first && <>
+                    <h4 className="my-2">{first.title}</h4>
+                    <div className="my-4 text-justify">
+                        {first.image && (<div className="image-cover mb-4 overflow-hidden"><img src={first.image} /></div>)}
+                        {first.text.replace(/\n/g, "\n\n")}
+                    </div>
+                </>}
+                {second && <>
+                    <h4 className="my-2">{second.title}</h4>
+                    <div className="my-4 text-justify">
+                        {second.image && (<div className="image-cover mb-4 overflow-hidden"><img src={second.image} /></div>)}
+                        {second.text.replace(/\n/g, "\n\n")}
+                    </div>
+                </>}
+                {third && <>
+                    <h4 className="my-2">{third.title}</h4>
+                    <div className="my-4 text-justify">
+                        {third.image && (<div className="image-cover mb-4 overflow-hidden"><img src={third.image} /></div>)}
+                        {third.text.replace(/\n/g, "\n\n")}
+                    </div>
+                </>}
             </div>
         </div>
     );
 };
 
 const QuadLayout = (props) => {
-    const [first, second, third, fourth, ...rest] = props.articles;
+    const [first, second, third, fourth] = props.articles.take(4);
     return (
         <div className="flex flex-row three-items border-b border-gray-500 py-5">
             <div className="eight-columns">
@@ -111,29 +181,9 @@ const QuadLayout = (props) => {
     );
 };
 
-const Reader = props => {
-    if (props.article) {
-        const article = props.article;
-        return (<div className="fixed w-screen h-screen overflow-scroll font-serif text-lg z-50">
-            <div className="bg-white w-1/2 mx-auto p-10 rounded-lg shadow-xl" onClick={(e) => { e.stopPropagation(); }}>
-                <h1>{article.title}</h1>
-                <div className="text-gray-500">{moment(article.published).format("LLL")} on <a className="text-gray-800" href={article.url} rel="noref" target="_blank">{getDomainFromUrl(article.url)}</a></div>
-                <div onMouseUp={() => {
-                    const textToCopy = getSelectedText();
-                    if (textToCopy.length) {
-                        copyToClipboard(`${textToCopy} ${article.url}`);
-                    }
-                }} className="article-content my-5" dangerouslySetInnerHTML={{__html: article.content}}></div>
-            </div>
-        </div>);
-    }
-    return null;
-}
-
 const App = () => {
     const [ data, setData ] = useState({ articles: [] });
     const [ topic, setTopic ] = useState('everything');
-    const [ readMode, setReadMode ] = useState({ article: null });
 
     useEffect(() => {
         const fetchData = async () => {
@@ -142,45 +192,46 @@ const App = () => {
         };
 
         fetchData();
-    }, [topic, readMode]);
+    }, [topic]);
 
-    console.log(data.articles);
+    // const one = data.articles.filter(FULL_PAGE_ARTICLE);
+    // const two = data.articles.filter(HALF_PAGE_ARTICLE);
+    // const three = data.articles.filter(ONE_THIRD_ARTICLE);
+    // const four = data.articles.filter(ONE_FOURTH_ARTICLE);
 
-    const fullPageArticles = data.articles.filter(FULL_PAGE_ARTICLE);
-    const halfPageArticles = data.articles.filter(HALF_PAGE_ARTICLE);
-    const oneThirdPageArticles = data.articles.filter(ONE_THIRD_ARTICLE);
-    console.log("DBG", oneThirdPageArticles);
-    const oneFourthPageArticles = data.articles.filter(ONE_FOURTH_ARTICLE);
+    const Articles = () => {
+        let groups = [];
+        while (data.articles.length > 3) {
+            groups.push(data.articles.take(3));
+        }
+        if (data.articles.length) groups.push(data.articles);
+        return groups.length && groups.map((g, i) => <TripleLayout key={i} articles={g}/>);
+    };
 
     return (
-    <div className="container flex flex-col w-screen relative">
-        <div className="header w-screen bg-gray-100 p-5">
-            <div className="w-1/2 mx-auto">
+    <div className="w-full h-auto">
+        <div className="header w-full p-5 font-serif">
+            <div className="text-6xl font-bold mx-auto text-center" style={{ fontVariant: "small-caps" }}>The Large Print</div>
+    <div className="text-base mx-auto text-center uppercase py-2 border-b-2 border-t-2 border-black" style={{ letterSpacing: "5px" }}>{moment(new Date()).format("dddd, MMMM Do YYYY")} | {data.articles.length} articles</div>
+            {/* <div className="w-1/2 mx-auto">
                 <ul className="flex font-sans">
                     <li className={`px-4 py-2 m-2 rounded-full border-2 nav-article-topic ${topic == 'everything' ? 'active' : ''}`}><a onClick={() => {setTopic('everything')}}>Everything</a></li>
                     <li className={`px-4 py-2 m-2 rounded-full border-2 nav-article-topic ${topic == 'vietnamese' ? 'active' : ''}`}><a onClick={() => {setTopic('vietnamese')}}>Vietnamese</a></li>
                     <li className={`px-4 py-2 m-2 rounded-full border-2 nav-article-topic ${topic == 'financial' ? 'active' : ''}`}><a onClick={() => {setTopic('financial')}}>Financial</a></li>
-                    <li className={`px-4 py-2 m-2 rounded-full border-2 nav-article-topic ${topic == 'technical' ? 'active' : ''}`}><a onClick={() => {setTopic('technical')}}>Technical</a></li>
                     <li className={`px-4 py-2 m-2 rounded-full border-2 nav-article-topic ${topic == 'other' ? 'active' : ''}`}><a onClick={() => {setTopic('other')}}>Others</a></li>
                 </ul>
-            </div>
+            </div> */}
         </div>
-        <div className="main-content w-screen flex-1 bg-gray-200 font-serif text-base">
-            <div className="w-full mx-auto p-5">
+        <div className="w-full font-serif text-base">
+            <div className="flex-1 flex flex-col mx-auto p-5">
                 {!data.articles.length ? (<div className="h-screen content-center">Nothing here, please get back later!</div>) : ("")}
-                {oneFourthPageArticles.length && <QuadLayout articles={oneFourthPageArticles} />}
-                {oneThirdPageArticles.length && <TripleLayout articles={oneThirdPageArticles}/>}
-                {/* {data.articles.map((article, i) => (
-                    <div key={i} className="article-card cursor-pointer flex flex-row">
-                        <div className="flex-1">
-                            <h4>{article.title}</h4>
-                            <div>{article.text.length}</div>
-                            <div className="block font-sans text-gray-600"><span>{getDomainFromUrl(article.url)}</span>&nbsp;<span>{moment(article.published).toNow()}</span></div>
-                            {article.image ? (<div className="font-sans image-cover ml-3 overflow-hidden"><img src={article.image} /></div>) : ("")}
-                            <div className="my-2">{article.text}</div>
-                        </div>
-                    </div>
-                ))} */}
+                {/* {data.articles.length && <>
+                    <FullPageLayout articles={{one, four}} />
+                    <QuadLayout articles={four} />
+                    <FullPageLayoutLeft articles={{ one, four }} />
+                    <TripleLayout articles={three} />
+                </>} */}
+                <Articles/>
             </div>
         </div>
     </div>
