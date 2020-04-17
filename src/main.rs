@@ -28,7 +28,7 @@ struct ArticleParams {
 }
 
 fn main() -> std::io::Result<()> {
-    
+
     let feeds = sources::get_sources_from_range(sources::ID_VIETNAMESE..sources::ID_OTHER);
 
     let articles_data: Vec<articles::ParsedEntry> = vec![];
@@ -59,12 +59,12 @@ fn main() -> std::io::Result<()> {
     });
 
     let web_data = web::Data::new(arc.clone());
-    
+
     std::env::set_var("RUST_LOG", "actix_server=info,actix_web=info");
     env_logger::init();
 
     let port = std::env::var("PORT").unwrap_or("3366".to_owned()).parse::<u16>().unwrap_or(3366);
-    
+
     HttpServer::new(move || {
         App::new()
             .register_data(web_data.clone())
@@ -81,7 +81,7 @@ fn main() -> std::io::Result<()> {
                 let articles: Vec<_> = data.iter().cloned().collect();
 
                 // TODO: pagination, maybe?
-                HttpResponse::Ok().json(json!({ 
+                HttpResponse::Ok().json(json!({
                     "articles": articles
                                 .into_iter()
                                 .filter(|e: &articles::ParsedEntry| domains.iter().any(|url| e.url.contains(url)))
@@ -90,6 +90,6 @@ fn main() -> std::io::Result<()> {
             })))
             .service(fs::Files::new("/", "./static/dist/").index_file("index.html"))
     })
-    .bind(("127.0.0.1", port))?
+    .bind(("0.0.0.0", port))?
     .run()
 }
