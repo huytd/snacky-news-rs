@@ -15,7 +15,7 @@ pub struct ParsedEntry {
 }
 
 fn fetch_url_image(url: String) -> Option<String> {
-    if let Ok(mut req) = reqwest::get(format!("{}", url).as_str()) {
+    if let Ok(mut req) = reqwest::blocking::get(format!("{}", url).as_str()) {
         if let Ok(body) = req.text() {
             let html = Html::parse_document(body.as_str());
             if let Ok(selector) = Selector::parse("meta[property='og:image']") {
