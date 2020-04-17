@@ -19,8 +19,8 @@ use actix_files as fs;
 mod articles;
 mod sources;
 
-// Run every 30 min
-const FETCH_INTERVAL: u64 = 30 * 60u64;
+// Run every 1 hours
+const FETCH_INTERVAL: u64 = 60 * 60u64;
 
 #[derive(serde::Deserialize)]
 struct ArticleParams {

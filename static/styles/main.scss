@@ -1,4 +1,3 @@
-@import url('https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,700|Source+Serif+Pro:400,700&display=swap&subset=latin-ext,vietnamese');
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -9,15 +8,12 @@ $base-heading-size: 2.4em;
     h#{$level} {
         font-size: $base-heading-size - $level * 0.25;
         line-height: 1.4em;
+        font-weight: 700;
     }
 }
 
-.font-sans {
-    font-family: 'Source Sans Pro', sans-serif;
-}
-
 .font-serif {
-    font-family: 'Source Serif Pro', serif;
+    font-family: Book Antiqua,Palatino,Palatino Linotype,Palatino LT STD,Georgia,serif;
 }
 
 .nav-article-topic {
@@ -45,8 +41,6 @@ $base-heading-size: 2.4em;
 
     $article-image-size: 160px;
     .image-cover {
-        width: $article-image-size;
-        height: $article-image-size;
         text-align: center;
         position: relative;
         @apply bg-gray-600;
@@ -60,7 +54,6 @@ $base-heading-size: 2.4em;
 
         img {
             display: block;
-            height: $article-image-size;
             width: auto;
             max-width: inherit;
             position: absolute;
@@ -79,4 +72,34 @@ $base-heading-size: 2.4em;
     a {
         @apply text-blue-600;
     }
+}
+
+.three-items {
+    div {
+        flex: 1;
+    }
+}
+
+.two-columns {
+    column-count: 2;
+}
+
+.three-columns {
+    column-count: 3;
+}
+
+.four-columns {
+    column-count: 4;
+}
+
+.five-columns {
+    column-count: 5;
+}
+
+.six-columns {
+    column-count: 6;
+}
+
+.eight-columns {
+    column-count: 8;
 }
