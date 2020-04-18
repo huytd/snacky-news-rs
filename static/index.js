@@ -139,8 +139,8 @@ const FullPageLayoutLeft = (props) => {
 const TripleLayout = (props) => {
     const [first, second, third] = props.articles.take(3);
     return (
-        <div className="three-items border-b border-gray-500 py-5">
-            <div className="six-columns">
+        <div className="border-b border-gray-500 py-5">
+            <div className="column-view">
                 {first && <>
                     <h4 className="my-2">{first.title}</h4>
                     <div className="my-4 text-justify break-words">
@@ -198,16 +198,10 @@ const App = () => {
         fetchData();
     }, [topic]);
 
-    // const one = data.articles.filter(FULL_PAGE_ARTICLE);
-    // const two = data.articles.filter(HALF_PAGE_ARTICLE);
-    // const three = data.articles.filter(ONE_THIRD_ARTICLE);
-    // const four = data.articles.filter(ONE_FOURTH_ARTICLE);
-
     const Articles = () => {
         let groups = [];
         let len = 0;
         const totalLen = data.articles.reduce((sum, a) => sum + a.text.length, 0);
-        console.log("DBG::TOAL", totalLen);
         let grabbedLen = 0;
         while (totalLen - grabbedLen > 7000) {
             len = 0;
@@ -220,10 +214,8 @@ const App = () => {
                 gr.push(article);
             }
             grabbedLen += len
-            console.log("DBG::GRABBED", grabbedLen);
             groups.push(gr);
         }
-        // if (data.articles.length) groups.push(data.articles);
         return groups.length && groups.map((g, i) => <TripleLayout key={i} articles={g} />);
     };
 

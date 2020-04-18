@@ -46,33 +46,31 @@ $base-heading-size: 2.4em;
     }
 }
 
-.two-columns {
-    column-count: 2;
-}
-
-.three-columns {
-    column-count: 3;
-}
-
-.four-columns {
-    column-count: 4;
-}
-
-.five-columns {
-    column-count: 5;
-}
-
-.six-columns {
-    column-count: 6;
-}
-
-.eight-columns {
-    column-count: 8;
-}
-
 .image-cover {
     img {
         filter: grayscale(100%);
         mix-blend-mode: multiply;
+    }
+}
+
+.column-view {
+    column-count: 1;
+}
+
+@screen sm {
+    .column-view {
+        column-count: 2;
+    }
+}
+
+@screen md {
+    .column-view {
+        column-count: 4;
+    }
+}
+
+@screen lg {
+    .column-view {
+        column-count: 6;
     }
 }
