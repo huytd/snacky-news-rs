@@ -9,6 +9,7 @@ extern crate serde;
 extern crate serde_json;
 extern crate chrono;
 
+use std::panic;
 use std::time::Duration;
 use std::sync::{Arc, RwLock};
 use actix_web::{
@@ -19,8 +20,8 @@ use actix_files as fs;
 mod articles;
 mod sources;
 
-// Run every 1 hours
-const FETCH_INTERVAL: u64 = 60 * 60u64;
+// Run every 2 hours
+const FETCH_INTERVAL: u64 = 120 * 60u64;
 
 #[derive(serde::Deserialize)]
 struct ArticleParams {
@@ -47,13 +48,18 @@ fn main() -> std::io::Result<()> {
             let mut count = 0;
             articles::parse_feed_to_entries(&feeds)
                 .for_each(|e| {
-                    count += 1;
-                    println!("count #{}: {}", count, e.url);
-                    let entry = articles::fetch_entry_content(e);
-                    if entry.is_ok() {
-                        let okentry = entry.unwrap();
-                        let mut guard = write_arc.write().unwrap();
-                        (*guard).push(okentry);
+                    let ret = panic::catch_unwind(|| {
+                        println!("count #{}: {}", count, e.url);
+                        let entry = articles::fetch_entry_content(e);
+                        if entry.is_ok() {
+                            let okentry = entry.unwrap();
+                            let mut guard = write_arc.write().unwrap();
+                            (*guard).push(okentry);
+                        }
+                    });
+
+                    if ret.is_ok() {
+                        count += 1;
                     }
                 });
             println!("Saved all data!");

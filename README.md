@@ -1,6 +1,6 @@
 # Snacky News
 
-![](screenshot.gif)
+![](screenshot.png)
 
 ## How to run on your local machine
 
@@ -96,7 +96,6 @@ v
 
 ## Known Issues
 
-- [ ] "Too many open files" on Linux
 - [ ] Need to filter out articles older than a day
 - [ ] Need to reduce the rate of article fetch call
 - [ ] Mobile and Tablet UI
